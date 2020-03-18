@@ -49,21 +49,19 @@ router.get('/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
 	const id = req.params.id
-  db
-  .findById(id)
-  .then(post =>{
-    post ?
-      db
-        .remove(id)
-        .then(deleted => {
-          deleted ? res.status(200).json({ message: `Post ${id} was deleted`, info: (post) }) : res.status(404).json({ message: 'That Post ID Does NOT Exist' })
-        })
-      : null
-  })
-        .catch(err => {
-          res.status(500).json({ message: 'The Post Could Not Be Removed' })
-        })
-    
+	db
+		.findById(id)
+		.then(post => {
+			post
+				? db.remove(id).then(deleted => {
+						deleted
+							res.status(200).json({ message: `Post ${id} was deleted`, info: post }) 
+				  })
+				: res.status(404).json({ message: 'That Post ID Does NOT Exist' })
+		})
+		.catch(err => {
+			res.status(500).json({ message: 'The Post Could Not Be Removed' })
+		})
 })
 
 router.put('/:id', (req, res) => {
@@ -83,8 +81,6 @@ router.put('/:id', (req, res) => {
 					})
 				})
 })
-
-
 
 //COMMENTS ENDPOINTS (NOT WORTH MAKING ANOTHER ROUTER FOR SINCE THERE ARE ONLY 2)
 
@@ -115,17 +111,16 @@ router.post('/:id/comments', (req, res) => {
 							})
 						})
 				}
-		})
+		  })
 })
 
-
 router.get('/:id/comments', (req, res) => {
-  const id = req.params.id
-  
+	const id = req.params.id
+
 	db
 		.findPostComments(id)
 		.then(data => {
-			data ? res.status(200).json(data) : res.status(404).json({ message: 'The Post ID Does NOT Exist.' })
+			data.length >= 1 ? res.status(200).json(data) : res.status(404).json({ message: 'The Post ID Does NOT Exist.' })
 		})
 		.catch(err => {
 			res.status(500).json({
